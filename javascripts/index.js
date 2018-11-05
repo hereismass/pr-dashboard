@@ -100,6 +100,7 @@ class DashboardApp {
       prs = await this.api.get(`/repos/${this.org}/${repo}/pulls`);
     } catch (e) {
       console.log('error', e);
+      this.showError('error getting PRs' + e);
     }
 
     return prs;
@@ -113,6 +114,7 @@ class DashboardApp {
       );
     } catch (e) {
       console.log('error', e);
+      this.showError('error getting reviews' + e);
     }
 
     return reviews;
