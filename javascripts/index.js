@@ -95,11 +95,12 @@ class DashboardApp {
   }
 
   async getData() {
-    this.loadingState();
+    //this.loadingState();
     this.prs = [];
     for (const repo of this.repos) {
       let prs = await this.getPrsForRepo(repo);
       // we filter by users
+      this.showError('PR loaded ' + repo);
       prs = prs.filter(pr => {
         // remove prs without user
         if (!this.users.includes(pr.user.login)) {
