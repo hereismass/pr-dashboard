@@ -9,7 +9,7 @@ class DashboardApp {
     try {
       this.start();
     } catch (e) {
-      console.log('error starting');
+      this.showError('error starting');
     }
   }
 
