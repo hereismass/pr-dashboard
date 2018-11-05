@@ -9,13 +9,43 @@ class DashboardApp {
     this.start();
   }
 
+  parse_query_string(query) {
+    var vars = query.split('&');
+    var query_string = {};
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      var key = decodeURIComponent(pair[0]);
+      var value = decodeURIComponent(pair[1]);
+      // If first entry with this name
+      if (typeof query_string[key] === 'undefined') {
+        query_string[key] = decodeURIComponent(value);
+        // If second entry with this name
+      } else if (typeof query_string[key] === 'string') {
+        var arr = [query_string[key], decodeURIComponent(value)];
+        query_string[key] = arr;
+        // If third or later entry with this name
+      } else {
+        query_string[key].push(decodeURIComponent(value));
+      }
+    }
+    return query_string;
+  }
+
   getUrlParams() {
-    this.url = new URL(window.location.href);
+    /*this.url = new URL(window.location.href);
     this.token = this.url.searchParams.get('token');
     this.org = this.url.searchParams.get('org');
     this.repos = this.url.searchParams.get('repos');
     this.users = this.url.searchParams.get('users');
-    this.filters = this.url.searchParams.get('filters');
+    this.filters = this.url.searchParams.get('filters');*/
+
+    const params = this.parse_query_string(window.location.search.substring(1));
+    console.log(params);
+    this.token = params.token;
+    this.org = params.org;
+    this.repos = params.repos;
+    this.users = params.users;
+    this.filters = params.filters;
 
     this.repos = !!this.repos ? this.repos.split(',') : null;
     this.users = !!this.users ? this.users.split(',') : null;
