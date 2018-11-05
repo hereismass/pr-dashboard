@@ -34,10 +34,12 @@ class DashboardApp {
     this.loading.classList.add('d-none');
     this.error.textContent = message;
     this.error.classList.remove('d-none');
+    this.container.classList.add('hide-pr');
   }
   hideError() {
     this.error.classList.add('d-none');
     this.error.textContent = '';
+    this.container.classList.remove('hide-pr');
   }
 
   loadingState() {
@@ -100,7 +102,7 @@ class DashboardApp {
       prs = await this.api.get(`/repos/${this.org}/${repo}/pulls`);
     } catch (e) {
       console.log('error', e);
-      this.showError('error getting PRs' + e);
+      this.showError('error getting PRs' + e.statusText);
     }
 
     return prs;
@@ -114,7 +116,7 @@ class DashboardApp {
       );
     } catch (e) {
       console.log('error', e);
-      this.showError('error getting reviews' + e);
+      this.showError('error getting reviews' + e.statusText);
     }
 
     return reviews;

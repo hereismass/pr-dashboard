@@ -161,6 +161,10 @@ a {
   width: 100vw;
 }
 
+#container.hide-pr .pr {
+  display: none;
+}
+
 #error {
   padding: 5vh;
   text-align: center;
