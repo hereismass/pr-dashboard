@@ -5,6 +5,7 @@ class DashboardApp {
     this.loading = document.querySelector('#loading');
     this.container = document.querySelector('#container');
     this.refreshInterval = 120;
+    this.showError('starting');
 
     try {
       this.start();
@@ -43,6 +44,8 @@ class DashboardApp {
     this.users = this.url.searchParams.get('users');
     this.filters = this.url.searchParams.get('filters');*/
 
+    this.showError('params');
+
     const params = this.parse_query_string(window.location.search.substring(1));
     console.log(params);
     this.token = params.token;
@@ -54,6 +57,8 @@ class DashboardApp {
     this.repos = !!this.repos ? this.repos.split(',') : null;
     this.users = !!this.users ? this.users.split(',') : null;
     this.filters = !!this.filters ? this.filters.split(',') : [];
+
+    this.showError('params' + token + org);
 
     if (!this.token || !this.org || !this.repos || !this.users) {
       this.showError(
