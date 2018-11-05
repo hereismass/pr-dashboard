@@ -118,14 +118,27 @@ class DashboardApp {
     return reviews;
   }
 
+  getReviewsImagesHtml(reviews) {
+    if (reviews.length === 0) {
+      return 'No reviews';
+    }
+
+    let html = '<span>reviews by</span>';
+    reviews.forEach(r => {
+      html += '<img class="pr-creator" src="' + r + '">';
+    });
+
+    return html;
+  }
+
   showData() {
     this.loading.classList.add('d-none');
     this.prs.forEach(pr => {
       const html = `<div class="pr">
+        <img class="pr-creator" src="${pr.creator}">
         <span class="pr-project">${pr.repo}</span>
         <span class="pr-title">${pr.title}</span>
-        <span class="pr-review">${pr.reviews.length} reviews</span>
-        <img class="pr-creator" src="${pr.creator}">
+        <span class="pr-review">${this.getReviewsImagesHtml(pr.reviews)}</span>
       </div>`;
 
       this.container.insertAdjacentHTML('beforeend', html);

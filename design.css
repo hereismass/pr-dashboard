@@ -182,6 +182,22 @@ a {
   height: 5vh;
 }
 
+.pr-project {
+  padding: 0 3vh;
+}
+
+.pr-title {
+  flex-grow: 1;
+}
+
+.pr-review {
+  display: flex;
+}
+
+.pr-review img {
+  padding-left: 1vh;
+}
+
 /* loading spinner */
 
 #loading {
