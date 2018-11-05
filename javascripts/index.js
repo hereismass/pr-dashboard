@@ -6,7 +6,11 @@ class DashboardApp {
     this.container = document.querySelector('#container');
     this.refreshInterval = 120;
 
-    this.start();
+    try {
+      this.start();
+    } catch (e) {
+      console.log('error starting');
+    }
   }
 
   parse_query_string(query) {
