@@ -15,15 +15,15 @@ class DashboardApp {
     this.org = this.url.searchParams.get('org');
     this.repos = this.url.searchParams.get('repos');
     this.users = this.url.searchParams.get('users');
+    this.filters = this.url.searchParams.get('filters');
 
     this.repos = !!this.repos ? this.repos.split(',') : null;
     this.users = !!this.users ? this.users.split(',') : null;
-
-    //console.log(token, org, repos, users);
+    this.filters = !!this.filters ? this.filters.split(',') : [];
 
     if (!this.token || !this.org || !this.repos || !this.users) {
       this.showError(
-        'Missing parameters. You need to define `token`, `org`, `repos` and `users`'
+        'Missing parameters. You need to define `token`, `org`, `repos` and `users`.'
       );
       return false;
     }
@@ -31,6 +31,7 @@ class DashboardApp {
   }
 
   showError(message) {
+    this.loading.classList.add('d-none');
     this.error.textContent = message;
     this.error.classList.remove('d-none');
   }
@@ -55,7 +56,7 @@ class DashboardApp {
     this.api = new GithubApi({ token: this.token });
 
     this.interval = setInterval(() => {
-      this.getData();
+      //this.getData();
     }, this.refreshInterval * 1000);
 
     this.getData();
@@ -67,7 +68,18 @@ class DashboardApp {
     for (const repo of this.repos) {
       let prs = await this.getPrsForRepo(repo);
       // we filter by users
-      prs = prs.filter(pr => this.users.includes(pr.user.login));
+      prs = prs.filter(pr => {
+        // remove prs without user
+        if (!this.users.includes(pr.user.login)) {
+          return false;
+        }
+        // remove prs that have a filtered tag
+        const labels = pr.labels.map(l => l.name);
+        if (labels.find(l => this.filters.includes(l))) {
+          return false;
+        }
+        return true;
+      });
       // we get the reviews
       for (const pr of prs) {
         const reviews = await this.getReviewsForPr(repo, pr.number);
