@@ -4,7 +4,7 @@ class DashboardApp {
     this.error = document.querySelector('#error');
     this.loading = document.querySelector('#loading');
     this.container = document.querySelector('#container');
-    this.refreshInterval = 15; // 15 seconds
+    this.refreshInterval = 120;
 
     this.start();
   }
