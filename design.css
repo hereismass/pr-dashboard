@@ -136,11 +136,11 @@ html {
 
 body {
   font-family: Arial, sans-serif;
-  font-size: 3vh;
+  font-size: 2vw;
+  color: #333333;
 }
 
 h1 {
-  font-size: 5vh;
   padding: 2vh;
 }
 
@@ -171,10 +171,9 @@ a {
 }
 
 .pr {
-  padding: 2vh;
+  padding: 1vw;
   display: flex;
-  justify-content: space-between;
-  line-height: 5vh;
+  line-height: 5vw;
 }
 
 .pr:nth-child(odd) {
@@ -182,20 +181,30 @@ a {
 }
 
 .pr-creator {
-  width: 5vh;
-  height: 5vh;
+  width: 5vw;
+  height: 5vw;
+  flex-shrink: 0;
 }
 
 .pr-project {
-  padding: 0 3vh;
+  padding: 0 2vw;
+  flex-shrink: 0;
 }
 
 .pr-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
   flex-grow: 1;
+}
+.pr-title span {
+  padding-right: 2vw;
 }
 
 .pr-review {
   display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .pr-review img {

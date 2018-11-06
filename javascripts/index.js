@@ -120,6 +120,7 @@ class DashboardApp {
         this.prs.push({
           repo,
           title: pr.title,
+          number: pr.number,
           reviews: reviews.map(r => r.user.avatar_url),
           creator: pr.user.avatar_url
         });
@@ -158,8 +159,12 @@ class DashboardApp {
     if (reviews.length === 0) {
       return 'No reviews';
     }
+    if (reviews.length > 2) {
+      return `${reviews.length} reviews`;
+    }
 
-    let html = '<span>reviews by</span>';
+    let html = '';
+
     reviews.forEach(r => {
       html += '<img class="pr-creator" src="' + r + '">';
     });
@@ -173,7 +178,7 @@ class DashboardApp {
       const html = `<div class="pr">
         <img class="pr-creator" src="${pr.creator}">
         <span class="pr-project">${pr.repo}</span>
-        <span class="pr-title">${pr.title}</span>
+        <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
         <span class="pr-review">${this.getReviewsImagesHtml(pr.reviews)}</span>
       </div>`;
 
