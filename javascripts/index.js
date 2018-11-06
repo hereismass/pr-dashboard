@@ -5,13 +5,10 @@ class DashboardApp {
     this.loading = document.querySelector('#loading');
     this.container = document.querySelector('#container');
     this.refreshInterval = 120;
-    this.showError('starting');
 
     try {
       this.start();
-    } catch (e) {
-      this.showError('error starting');
-    }
+    } catch (e) {}
   }
 
   parse_query_string(query) {
@@ -44,8 +41,6 @@ class DashboardApp {
     this.users = this.url.searchParams.get('users');
     this.filters = this.url.searchParams.get('filters');*/
 
-    this.showError('params');
-
     const params = this.parse_query_string(window.location.search.substring(1));
     console.log(params);
     this.token = params.token;
@@ -57,8 +52,6 @@ class DashboardApp {
     this.repos = !!this.repos ? this.repos.split(',') : null;
     this.users = !!this.users ? this.users.split(',') : null;
     this.filters = !!this.filters ? this.filters.split(',') : [];
-
-    this.showError('params' + token + org);
 
     if (!this.token || !this.org || !this.repos || !this.users) {
       this.showError(
@@ -97,19 +90,18 @@ class DashboardApp {
     this.api = new GithubApi({ token: this.token });
 
     this.interval = setInterval(() => {
-      //this.getData();
+      this.getData();
     }, this.refreshInterval * 1000);
 
     this.getData();
   }
 
   async getData() {
-    //this.loadingState();
+    this.loadingState();
     this.prs = [];
     for (const repo of this.repos) {
       let prs = await this.getPrsForRepo(repo);
       // we filter by users
-      this.showError('PR loaded ' + repo);
       prs = prs.filter(pr => {
         // remove prs without user
         if (!this.users.includes(pr.user.login)) {
