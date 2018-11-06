@@ -4,6 +4,7 @@ class DashboardApp {
     this.error = document.querySelector('#error');
     this.loading = document.querySelector('#loading');
     this.container = document.querySelector('#container');
+    this.titleDom = document.querySelector('#title');
     this.refreshInterval = 120;
 
     try {
@@ -48,6 +49,7 @@ class DashboardApp {
     this.repos = params.repos;
     this.users = params.users;
     this.filters = params.filters;
+    this.title = params.title;
 
     this.repos = !!this.repos ? this.repos.split(',') : null;
     this.users = !!this.users ? this.users.split(',') : null;
@@ -84,6 +86,10 @@ class DashboardApp {
     // we get params
     if (!this.getUrlParams()) {
       return;
+    }
+
+    if (!!this.title) {
+      this.titleDom.textContent = this.title;
     }
 
     // init api
@@ -135,7 +141,6 @@ class DashboardApp {
       prs = await this.api.get(`/repos/${this.org}/${repo}/pulls`);
     } catch (e) {
       console.log('error', e);
-      this.showError('error getting PRs' + e.statusText);
     }
 
     return prs;
@@ -149,7 +154,6 @@ class DashboardApp {
       );
     } catch (e) {
       console.log('error', e);
-      this.showError('error getting reviews' + e.statusText);
     }
 
     return reviews;
