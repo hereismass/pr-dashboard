@@ -153,8 +153,44 @@ a {
   display: none;
 }
 
-#title {
+header {
+  width: 100vw;
+  display: flex;
+}
+
+#team,
+#lastweek {
+  width: 50vw;
+}
+
+#title,
+#lastweek-title {
   text-align: center;
+}
+
+#members {
+  display: flex;
+  overflow: hidden;
+}
+
+#metrics {
+  display: flex;
+}
+
+#opened-prs,
+#refused-prs,
+#days-to-merge {
+  text-align: center;
+  flex-grow: 1;
+  font-size: 1.5vw;
+  height: 6vw;
+}
+
+#opened-prs span,
+#refused-prs span,
+#days-to-merge span {
+  font-size: 4vw;
+  display: block;
 }
 
 #container {
@@ -180,10 +216,15 @@ a {
   background-color: #eeeeee;
 }
 
-.pr-creator {
+.pr-creator,
+.team-member {
   width: 5vw;
   height: 5vw;
   flex-shrink: 0;
+}
+
+.team-member {
+  margin: 0 0 1vw 1vw;
 }
 
 .pr-project {

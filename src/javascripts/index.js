@@ -1,3 +1,8 @@
+import style from '../stylesheets/design.css';
+
+import GithubApi from './api.js';
+import { RSA_PKCS1_OAEP_PADDING } from 'constants';
+
 // we get url params
 class DashboardApp {
   constructor() {
@@ -5,11 +10,12 @@ class DashboardApp {
     this.loading = document.querySelector('#loading');
     this.container = document.querySelector('#container');
     this.titleDom = document.querySelector('#title');
+    this.mergedDom = document.querySelector('#opened-prs > span');
+    this.refusedDom = document.querySelector('#refused-prs > span');
+    this.averageDom = document.querySelector('#days-to-merge > span');
     this.refreshInterval = 120;
 
-    try {
-      this.start();
-    } catch (e) {}
+    this.start();
   }
 
   parse_query_string(query) {
@@ -35,13 +41,6 @@ class DashboardApp {
   }
 
   getUrlParams() {
-    /*this.url = new URL(window.location.href);
-    this.token = this.url.searchParams.get('token');
-    this.org = this.url.searchParams.get('org');
-    this.repos = this.url.searchParams.get('repos');
-    this.users = this.url.searchParams.get('users');
-    this.filters = this.url.searchParams.get('filters');*/
-
     const params = this.parse_query_string(window.location.search.substring(1));
     console.log(params);
     this.token = params.token;
@@ -56,9 +55,7 @@ class DashboardApp {
     this.filters = !!this.filters ? this.filters.split(',') : [];
 
     if (!this.token || !this.org || !this.repos || !this.users) {
-      this.showError(
-        'Missing parameters. You need to define `token`, `org`, `repos` and `users`.'
-      );
+      this.showError('Missing parameters. You need to define `token`, `org`, `repos` and `users`.');
       return false;
     }
     return true;
@@ -93,10 +90,10 @@ class DashboardApp {
     }
 
     // init api
-    this.api = new GithubApi({ token: this.token });
+    this.api = new GithubApi({ token: this.token, org: this.org });
 
     this.interval = setInterval(() => {
-      this.getData();
+      //this.getData();
     }, this.refreshInterval * 1000);
 
     this.getData();
@@ -105,10 +102,17 @@ class DashboardApp {
   async getData() {
     this.loadingState();
     this.prs = [];
+    this.closedPrs = [];
+    this.lwOpened = 0;
+    this.lwRefused = 0;
+    this.lwAverage = 0;
     for (const repo of this.repos) {
-      let prs = await this.getPrsForRepo(repo);
+      // we get prs
+      let openPrs = await this.api.getOpenPrs(repo);
+      let closedPrs = await this.api.getClosedPrsLastWeek(repo);
+
       // we filter by users
-      prs = prs.filter(pr => {
+      openPrs = openPrs.filter(pr => {
         // remove prs without user
         if (!this.users.includes(pr.user.login)) {
           return false;
@@ -120,70 +124,60 @@ class DashboardApp {
         }
         return true;
       });
-      // we get the reviews
-      for (const pr of prs) {
-        const reviews = await this.getReviewsForPr(repo, pr.number);
+
+      // we filter by users
+      closedPrs = closedPrs.filter(pr => {
+        // remove prs without user
+        if (!this.users.includes(pr.user.login)) {
+          return false;
+        }
+        return true;
+      });
+
+      // we get the details
+      for (const pr of openPrs) {
+        const prDetails = await this.api.getPrDetails(repo, pr.number);
+
         this.prs.push({
           repo,
           title: pr.title,
           number: pr.number,
-          reviews: reviews.map(r => r.user.avatar_url),
+          comments: prDetails.comments,
+          mergeable: prDetails.mergeable,
           creator: pr.user.avatar_url
         });
       }
+
+      for (const pr of closedPrs) {
+        const isMerged = await this.api.getPrDetails(repo, pr.number);
+
+        this.closedPrs.push({
+          closed_at: pr.closed_at,
+          created_at: pr.created_at,
+          is_merged: isMerged
+        });
+      }
     }
+
+    const mergedPrs = this.closedPrs.filter(pr => !!pr.is_merged);
+
+    this.lwOpened = mergedPrs.length;
+    this.lwRefused = this.closedPrs.length - this.lwOpened;
+
     this.showData();
-  }
-
-  async getPrsForRepo(repo) {
-    let prs = [];
-    try {
-      prs = await this.api.get(`/repos/${this.org}/${repo}/pulls`);
-    } catch (e) {
-      console.log('error', e);
-    }
-
-    return prs;
-  }
-
-  async getReviewsForPr(repo, pr) {
-    let reviews = [];
-    try {
-      reviews = await this.api.get(
-        `/repos/${this.org}/${repo}/pulls/${pr}/reviews`
-      );
-    } catch (e) {
-      console.log('error', e);
-    }
-
-    return reviews;
-  }
-
-  getReviewsImagesHtml(reviews) {
-    if (reviews.length === 0) {
-      return 'No reviews';
-    }
-    if (reviews.length > 2) {
-      return `${reviews.length} reviews`;
-    }
-
-    let html = '';
-
-    reviews.forEach(r => {
-      html += '<img class="pr-creator" src="' + r + '">';
-    });
-
-    return html;
   }
 
   showData() {
     this.loading.classList.add('d-none');
+    this.mergedDom.textContent = this.lwOpened;
+    this.refusedDom.textContent = this.lwRefused;
     this.prs.forEach(pr => {
-      const html = `<div class="pr">
+      const html = `<div class="pr" id="${pr.repo}-${pr.number}">
         <img class="pr-creator" src="${pr.creator}">
         <span class="pr-project">${pr.repo}</span>
         <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
-        <span class="pr-review">${this.getReviewsImagesHtml(pr.reviews)}</span>
+        <span class="pr-comments">${pr.comments} comments</span>
+        <span class="pr-mergeable">${pr.mergeable ? '👍' : '👎'}</span>
       </div>`;
 
       this.container.insertAdjacentHTML('beforeend', html);
