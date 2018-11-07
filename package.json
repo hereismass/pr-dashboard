@@ -4,8 +4,9 @@
   "description": "Dashboard to follow open PRs on specific org/projects",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development ./src/javascripts/index.js --output ./dist/main.js",
-    "production": "webpack --mode production ./src/javascripts/index.js --output ./dist/main.js"
+    "start": "npx webpack-dev-server --mode development ./src/javascripts/index.js --output ./dist/main.js",
+    "production": "npx webpack --mode production ./src/javascripts/index.js --output ./dist/main.js",
+    "publish": "./publish.sh"
   },
   "repository": {
     "type": "git",
@@ -19,12 +20,13 @@
   "homepage": "https://github.com/hereismass/pr-dashboard#readme",
   "dependencies": {
     "@octokit/rest": "^15.16.1",
+    "css-loader": "^1.0.1",
+    "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.4",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10",
-    "css-loader": "^1.0.1",
-    "mini-css-extract-plugin": "^0.4.4"
+    "webpack-dev-server": "^3.1.10"
   }
 }
