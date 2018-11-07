@@ -94,13 +94,18 @@ class GithubApi {
   }
 
   async getPrMergeStatus(repo, number) {
-    const result = await this.api.pullRequests.checkMerged({
-      owner: this.org,
-      repo,
-      number
-    });
+    let result = null;
+    try {
+      result = await this.api.pullRequests.checkMerged({
+        owner: this.org,
+        repo,
+        number
+      });
+    } catch (e) {
+      // do nothing
+    }
 
-    return result.status === 204;
+    return result && result.status === 204;
   }
 
   async getUser(user) {
