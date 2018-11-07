@@ -182,13 +182,29 @@ class DashboardApp {
     this.lwOpened = mergedPrs.length;
     this.lwRefused = this.closedPrs.length - this.lwOpened;
 
+    this.calculateAverageMergeTime();
+
     this.showData();
+  }
+
+  calculateAverageMergeTime() {
+    let totalTime = 0;
+
+    this.closedPrs.forEach(pr => {
+      totalTime += Date.parse(pr.closed_at) - Date.parse(pr.created_at);
+    });
+    // average time in ms
+    this.lwAverage = totalTime / this.closedPrs.length;
+
+    // average time in hours
+    this.lwAverage = Math.round(this.lwAverage / 1000 / 60 / 60);
   }
 
   showData() {
     this.loading.classList.add('d-none');
     this.mergedDom.textContent = this.lwOpened;
     this.refusedDom.textContent = this.lwRefused;
+    this.averageDom.textContent = this.lwAverage;
     this.prs.forEach(pr => {
       const html = `<div class="pr" id="${pr.repo}-${pr.number}">
         <img class="pr-creator" src="${pr.creator}">

@@ -65,7 +65,10 @@ class GithubApi {
     const params = {
       owner: this.org,
       repo,
-      state: 'closed'
+      state: 'closed',
+      sort: 'updated',
+      direction: 'desc',
+      per_page: 50
     };
 
     const lastWeek = Date.now() - 7 * 24 * 60 * 60 * 1000;
