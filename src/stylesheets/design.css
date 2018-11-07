@@ -242,14 +242,14 @@ header {
   padding-right: 2vw;
 }
 
-.pr-review {
-  display: flex;
-  justify-content: flex-end;
+.pr-comments {
   flex-shrink: 0;
 }
 
-.pr-review img {
-  padding-left: 1vh;
+.pr-mergeable {
+  padding-left: 1vw;
+  flex-shrink: 0;
+  font-size: 4vw;
 }
 
 /* loading spinner */

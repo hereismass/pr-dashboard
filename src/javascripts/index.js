@@ -13,6 +13,7 @@ class DashboardApp {
     this.mergedDom = document.querySelector('#opened-prs > span');
     this.refusedDom = document.querySelector('#refused-prs > span');
     this.averageDom = document.querySelector('#days-to-merge > span');
+    this.membersDom = document.querySelector('#members');
     this.refreshInterval = 120;
 
     this.start();
@@ -42,7 +43,6 @@ class DashboardApp {
 
   getUrlParams() {
     const params = this.parse_query_string(window.location.search.substring(1));
-    console.log(params);
     this.token = params.token;
     this.org = params.org;
     this.repos = params.repos;
@@ -55,7 +55,9 @@ class DashboardApp {
     this.filters = !!this.filters ? this.filters.split(',') : [];
 
     if (!this.token || !this.org || !this.repos || !this.users) {
-      this.showError('Missing parameters. You need to define `token`, `org`, `repos` and `users`.');
+      this.showError(
+        'Missing parameters. You need to define `token`, `org`, `repos` and `users`.'
+      );
       return false;
     }
     return true;
@@ -79,7 +81,7 @@ class DashboardApp {
     this.loading.classList.remove('d-none');
   }
 
-  start() {
+  async start() {
     // we get params
     if (!this.getUrlParams()) {
       return;
@@ -93,9 +95,20 @@ class DashboardApp {
     this.api = new GithubApi({ token: this.token, org: this.org });
 
     this.interval = setInterval(() => {
-      //this.getData();
+      this.getData();
     }, this.refreshInterval * 1000);
 
+    // user pictures
+    this.usersData = [];
+    const uPromises = this.users.map(async u => {
+      const userData = await this.api.getUser(u);
+      this.usersData.push(userData);
+    });
+    await Promise.all(uPromises);
+
+    this.showUsers();
+
+    // all data
     this.getData();
   }
 
@@ -106,7 +119,8 @@ class DashboardApp {
     this.lwOpened = 0;
     this.lwRefused = 0;
     this.lwAverage = 0;
-    for (const repo of this.repos) {
+
+    const prPromises = this.repos.map(async repo => {
       // we get prs
       let openPrs = await this.api.getOpenPrs(repo);
       let closedPrs = await this.api.getClosedPrsLastWeek(repo);
@@ -135,7 +149,8 @@ class DashboardApp {
       });
 
       // we get the details
-      for (const pr of openPrs) {
+
+      const openPromises = openPrs.map(async pr => {
         const prDetails = await this.api.getPrDetails(repo, pr.number);
 
         this.prs.push({
@@ -146,18 +161,21 @@ class DashboardApp {
           mergeable: prDetails.mergeable,
           creator: pr.user.avatar_url
         });
-      }
+      });
 
-      for (const pr of closedPrs) {
-        const isMerged = await this.api.getPrDetails(repo, pr.number);
+      const closedPromises = closedPrs.map(async pr => {
+        const isMerged = await this.api.getPrMergeStatus(repo, pr.number);
 
         this.closedPrs.push({
           closed_at: pr.closed_at,
           created_at: pr.created_at,
           is_merged: isMerged
         });
-      }
-    }
+      });
+      await Promise.all(openPromises.concat(closedPromises));
+    });
+
+    await Promise.all(prPromises);
 
     const mergedPrs = this.closedPrs.filter(pr => !!pr.is_merged);
 
@@ -181,6 +199,13 @@ class DashboardApp {
       </div>`;
 
       this.container.insertAdjacentHTML('beforeend', html);
+    });
+  }
+
+  showUsers() {
+    this.usersData.forEach(u => {
+      const html = `<img class="team-member" src="${u.avatar_url}">`;
+      this.membersDom.insertAdjacentHTML('beforeend', html);
     });
   }
 }

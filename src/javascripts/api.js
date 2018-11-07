@@ -37,7 +37,11 @@ class GithubApi {
       response = await this.api.getNextPage(response);
       let newData = null;
       if (!!limitPredicate && !!limitTime) {
-        [newData, next] = this.getFilteredData(response.data, limitPredicate, limitTime);
+        [newData, next] = this.getFilteredData(
+          response.data,
+          limitPredicate,
+          limitTime
+        );
       }
 
       data = data.concat(newData);
@@ -66,7 +70,12 @@ class GithubApi {
 
     const lastWeek = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-    const prs = await this.paginate(this.api.pullRequests.getAll, params, 'closed_at', lastWeek);
+    const prs = await this.paginate(
+      this.api.pullRequests.getAll,
+      params,
+      'closed_at',
+      lastWeek
+    );
 
     return prs;
   }
@@ -88,7 +97,13 @@ class GithubApi {
       number
     });
 
-    return result;
+    return result.status === 204;
+  }
+
+  async getUser(user) {
+    const result = await this.api.users.getForUser({ username: user });
+
+    return result.data;
   }
 }
 
