@@ -1,7 +1,6 @@
 import style from '../stylesheets/design.css';
 
 import GithubApi from './api.js';
-import { RSA_PKCS1_OAEP_PADDING } from 'constants';
 
 // we get url params
 class DashboardApp {

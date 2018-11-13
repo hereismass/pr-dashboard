@@ -1,7 +1,16 @@
+const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+  entry: {
+    config: './src/javascripts/config.js',
+    board: './src/javascripts/board.js'
+  },
+  output: {
+    path: path.join(__dirname, './dist/'),
+    filename: '[name].js'
+  },
   module: {
     rules: [
       {
@@ -21,8 +30,14 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './src/views/index.html',
+      template: './src/views/config.html',
+      chunks: ['config'],
       filename: './index.html'
+    }),
+    new HtmlWebPackPlugin({
+      template: './src/views/board.html',
+      chunks: ['board'],
+      filename: './board.html'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',

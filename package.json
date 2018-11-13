@@ -4,8 +4,8 @@
   "description": "Dashboard to follow open PRs on specific org/projects",
   "main": "index.js",
   "scripts": {
-    "start": "npx webpack-dev-server --mode development ./src/javascripts/index.js --output ./dist/main.js",
-    "production": "npx webpack --mode production ./src/javascripts/index.js --output ./dist/main.js",
+    "start": "npx webpack-dev-server --mode development",
+    "production": "npx webpack --mode production",
     "publish": "./publish.sh"
   },
   "repository": {
