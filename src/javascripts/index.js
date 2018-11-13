@@ -210,7 +210,7 @@ class DashboardApp {
         <img class="pr-creator" src="${pr.creator}">
         <span class="pr-project">${pr.repo}</span>
         <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
-        <span class="pr-comments">${pr.comments} comments</span>
+        <span class="pr-comments">${pr.comments} 💬</span>
         <span class="pr-mergeable">${pr.mergeable ? '👍' : '👎'}</span>
       </div>`;
 
