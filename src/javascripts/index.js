@@ -182,22 +182,33 @@ class DashboardApp {
     this.lwOpened = mergedPrs.length;
     this.lwRefused = this.closedPrs.length - this.lwOpened;
 
-    this.calculateAverageMergeTime();
+    this.calculateMergeTime();
 
     this.showData();
   }
 
-  calculateAverageMergeTime() {
-    let totalTime = 0;
+  median(data) {
+    data.sort((a, b) =>  a - b);
+        if (data.length % 2 === 0) {
+      return (data[data.length / 2 - 1] + data[data.length / 2]) / 2;
+    }
+    return data[Math.floor(data.length / 2)];
+  }
 
-    this.closedPrs.forEach(pr => {
-      totalTime += Date.parse(pr.closed_at) - Date.parse(pr.created_at);
-    });
-    // average time in ms
-    this.lwAverage = totalTime / this.closedPrs.length;
+  // Better than a mean to eleminiate outliers
+  // https://en.wikipedia.org/wiki/Median_absolute_deviation
+  medianAbsoluteDeviation(data) {
+    const dataMedian = this.median(data);
+    return this.median(data.map(x => Math.abs(x - dataMedian)));
+  }
 
-    // average time in hours
-    this.lwAverage = Math.round(this.lwAverage / 1000 / 60 / 60);
+  calculateMergeTime() {
+    const prMergingTimes = this.closedPrs
+      .map(pr => Date.parse(pr.closed_at) - Date.parse(pr.created_at));
+    // median absolute deviation in ms
+    const mad = this.medianAbsoluteDeviation(prMergingTimes)
+    // mad in hours
+    this.lwAverage = Math.round(mad / 1000 / 60 / 60);
   }
 
   showData() {
