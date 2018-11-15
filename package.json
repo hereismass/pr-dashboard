@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/hereismass/pr-dashboard#readme",
   "dependencies": {
-    "@octokit/rest": "^15.16.1",
+    "@octokit/rest": "^15.17.0",
     "css-loader": "^1.0.1",
     "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",

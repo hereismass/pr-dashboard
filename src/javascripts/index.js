@@ -154,6 +154,10 @@ class DashboardApp {
       const openPromises = openPrs.map(async pr => {
         const prDetails = await this.api.getPrDetails(repo, pr.number);
 
+        const prReviews = await this.api.getPrReviews(repo, pr.number);
+
+        // console.log('reviews', prReviews);
+
         this.prs.push({
           repo,
           title: pr.title,

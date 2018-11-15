@@ -1,5 +1,4 @@
 import Octokit from '@octokit/rest';
-import { RSA_NO_PADDING } from 'constants';
 
 class GithubApi {
   constructor(opts) {
@@ -91,6 +90,21 @@ class GithubApi {
     });
 
     return pr.data;
+  }
+
+  async getPrReviews(repo, number) {
+    const params = {
+      owner: this.org,
+      repo,
+      number
+    };
+
+    const reviews = await this.paginate(
+      this.api.pullRequests.getReviews,
+      params
+    );
+
+    return reviews;
   }
 
   async getPrMergeStatus(repo, number) {
