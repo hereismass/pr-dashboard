@@ -115,6 +115,7 @@ class DashboardApp {
     this.loadingState();
     this.prs = [];
     this.closedPrs = [];
+    this.mergedPrs = [];
     this.lwOpened = 0;
     this.lwRefused = 0;
     this.lwAverage = 0;
@@ -152,6 +153,10 @@ class DashboardApp {
       const openPromises = openPrs.map(async pr => {
         const prDetails = await this.api.getPrDetails(repo, pr.number);
 
+        const prReviews = await this.api.getPrReviews(repo, pr.number);
+
+        // console.log('reviews', prReviews);
+
         this.prs.push({
           repo,
           title: pr.title,
@@ -176,26 +181,34 @@ class DashboardApp {
 
     await Promise.all(prPromises);
 
-    const mergedPrs = this.closedPrs.filter(pr => !!pr.is_merged);
+    this.mergedPrs = this.closedPrs.filter(pr => !!pr.is_merged);
 
-    this.lwOpened = mergedPrs.length;
+    this.lwOpened = this.mergedPrs.length;
     this.lwRefused = this.closedPrs.length - this.lwOpened;
 
-    this.calculateAverageMergeTime();
+    this.calculateMedianMergeTime();
 
     this.showData();
   }
 
-  calculateAverageMergeTime() {
-    let totalTime = 0;
+  calculateMedianMergeTime() {
+    if (this.mergedPrs.length === 0) {
+      this.lwAverage = 0;
+      return;
+    }
 
-    this.closedPrs.forEach(pr => {
-      totalTime += Date.parse(pr.closed_at) - Date.parse(pr.created_at);
-    });
-    // average time in ms
-    this.lwAverage = totalTime / this.closedPrs.length;
+    const timeArray = this.mergedPrs.reduce((a, b) => {
+      const t = Date.parse(b.closed_at) - Date.parse(b.created_at);
+      a.push(t);
+      return a;
+    }, []);
 
-    // average time in hours
+    timeArray.sort((a, b) => a - b);
+    const h = timeArray.length / 2;
+    this.lwAverage =
+      h % 1 ? timeArray[h - 0.5] : (timeArray[h - 1] + timeArray[h]) / 2;
+
+    // median time in hours
     this.lwAverage = Math.round(this.lwAverage / 1000 / 60 / 60);
   }
 
@@ -209,7 +222,7 @@ class DashboardApp {
         <img class="pr-creator" src="${pr.creator}">
         <span class="pr-project">${pr.repo}</span>
         <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
-        <span class="pr-comments">${pr.comments} comments</span>
+        <span class="pr-comments">${pr.comments} 💬</span>
         <span class="pr-mergeable">${pr.mergeable ? '👍' : '👎'}</span>
       </div>`;
 

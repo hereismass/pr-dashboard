@@ -30,14 +30,14 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './src/views/config.html',
-      chunks: ['config'],
+      template: './src/views/board.html',
+      chunks: ['board'],
       filename: './index.html'
     }),
     new HtmlWebPackPlugin({
-      template: './src/views/board.html',
-      chunks: ['board'],
-      filename: './board.html'
+      template: './src/views/config.html',
+      chunks: ['config'],
+      filename: './config.html'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
