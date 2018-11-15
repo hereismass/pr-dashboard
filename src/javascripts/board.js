@@ -54,9 +54,6 @@ class DashboardApp {
     this.filters = !!this.filters ? this.filters.split(',') : [];
 
     if (!this.token || !this.org || !this.repos || !this.users) {
-      this.showError(
-        'Missing parameters. You need to define `token`, `org`, `repos` and `users`.'
-      );
       return false;
     }
     return true;
@@ -80,9 +77,24 @@ class DashboardApp {
     this.loading.classList.remove('d-none');
   }
 
+  redirectToConfig() {
+    const url = `${window.location.protocol}//${
+      window.location.host
+    }/config.html?${!!this.token ? 'token=' + this.token + '&' : ''}${
+      !!this.org ? 'org=' + this.org + '&' : ''
+    }${!!this.repos ? 'repos=' + this.repos + '&' : ''}${
+      !!this.users ? 'users=' + this.users + '&' : ''
+    }${this.filters.length > 0 ? 'filters=' + this.filters + '&' : ''}${
+      !!this.title ? 'title=' + this.title + '&' : ''
+    }`;
+
+    window.location.replace(url);
+  }
+
   async start() {
     // we get params
     if (!this.getUrlParams()) {
+      this.redirectToConfig();
       return;
     }
 

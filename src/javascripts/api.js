@@ -8,7 +8,6 @@ class GithubApi {
       type: 'token',
       token: opts.token
     });
-
     this.org = opts.org;
   }
 
@@ -104,7 +103,7 @@ class GithubApi {
       params
     );
 
-    return reviews;
+    return reviews.data;
   }
 
   async getPrMergeStatus(repo, number) {
@@ -126,6 +125,11 @@ class GithubApi {
     const result = await this.api.users.getForUser({ username: user });
 
     return result.data;
+  }
+
+  async getAvailableOrgs() {
+    const orgs = await this.paginate(this.api.users.getOrgs, {});
+    return orgs;
   }
 }
 
