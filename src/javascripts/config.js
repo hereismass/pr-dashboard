@@ -1,5 +1,7 @@
+import reset from '../stylesheets/reset.css';
+import style from '../stylesheets/config.css';
+
 import GithubApi from './api.js';
-import { throws } from 'assert';
 
 class DashboardBuilder {
   constructor() {
@@ -7,7 +9,8 @@ class DashboardBuilder {
       this.cleanData();
       this.initApi();
     }, 500);
-    this.start();
+
+    //this.start();
   }
 
   start() {
@@ -50,9 +53,7 @@ class DashboardBuilder {
     this.selectedOrg = null;
     this.orgsDom = document.querySelector('#orgs-list');
     this.orgs.forEach(o => {
-      const html = `<div class='org' id='${o.login}'>${o.login} <img src='${
-        o.avatar_url
-      }'></div>`;
+      const html = `<div class='org' id='${o.login}'>${o.login} <img src='${o.avatar_url}'></div>`;
       this.orgsDom.insertAdjacentHTML('beforeend', html);
     });
 

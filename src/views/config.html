@@ -7,31 +7,32 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <title>Pull Requests Dashboard Builder</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-      crossorigin="anonymous"
-    />
   </head>
 
   <body>
-    <main role="main">
-      <div class="jumbotron">
-        <h1 class="display-4">Pull Request Dashboard</h1>
-        <p class="lead">
-          Do you want a dashboard for your team showing open PRs and stats? Give
-          it a try!
-        </p>
+    <h1>Title</h1>
+
+    <p>Stuff</p>
+
+
+    <div id="builder-form">
+      <div id="step-title">
+        <h2>Enter the title for your dashboard</h2>
+        <p>You can put whatever you want. Like 'Mobile Squad', or even 'Team Rocket'</p>
+
+        <input type="text" id="dashboard-title" placeholder="title" />
+
+        <button class="next-step" disabled>Next</button>
       </div>
+    </div>
 
-      <input type="text" id="dashboard-title" placeholder="title" />
+    <div id="builder-result">
 
-      <input type="text" id="dashboard-token" placeholder="github token" />
+    </div>
 
-      <div id="orgs-list"></div>
-      <div id="users-list"></div>
-      <div id="repos-list"></div>
+
+    <button id="build-url">Access your Dashboard</button>
+
     </main>
   </body>
 </html>

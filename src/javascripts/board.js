@@ -1,3 +1,4 @@
+import reset from '../stylesheets/reset.css';
 import style from '../stylesheets/design.css';
 
 import GithubApi from './api.js';
@@ -78,15 +79,13 @@ class DashboardApp {
   }
 
   redirectToConfig() {
-    const url = `${window.location.protocol}//${
-      window.location.host
-    }/config.html?${!!this.token ? 'token=' + this.token + '&' : ''}${
-      !!this.org ? 'org=' + this.org + '&' : ''
-    }${!!this.repos ? 'repos=' + this.repos + '&' : ''}${
-      !!this.users ? 'users=' + this.users + '&' : ''
-    }${this.filters.length > 0 ? 'filters=' + this.filters + '&' : ''}${
-      !!this.title ? 'title=' + this.title + '&' : ''
-    }`;
+    const url = `${window.location.protocol}//${window.location.host}/config.html?${
+      !!this.token ? 'token=' + this.token + '&' : ''
+    }${!!this.org ? 'org=' + this.org + '&' : ''}${
+      !!this.repos ? 'repos=' + this.repos + '&' : ''
+    }${!!this.users ? 'users=' + this.users + '&' : ''}${
+      this.filters.length > 0 ? 'filters=' + this.filters + '&' : ''
+    }${!!this.title ? 'title=' + this.title + '&' : ''}`;
 
     window.location.replace(url);
   }
@@ -217,8 +216,7 @@ class DashboardApp {
 
     timeArray.sort((a, b) => a - b);
     const h = timeArray.length / 2;
-    this.lwAverage =
-      h % 1 ? timeArray[h - 0.5] : (timeArray[h - 1] + timeArray[h]) / 2;
+    this.lwAverage = h % 1 ? timeArray[h - 0.5] : (timeArray[h - 1] + timeArray[h]) / 2;
 
     // median time in hours
     this.lwAverage = Math.round(this.lwAverage / 1000 / 60 / 60);
