@@ -1,0 +1,64 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10-browsers
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+        
+      # run tests!
+      - run: yarn test
+
+
+
+
+version: 2
+jobs:
+  publish:
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: pr-dashboard-v1-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: |
+            npm install
+      - save_cache:
+          key: pr-dashboard-v1-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build dashboard
+          command: |
+            npm run production
+      - run:
+          name: Publish on Github Pages
+          command: |
+            npm run publish
+workflows:
+  version: 2
+  master-workflow:
+    jobs:
+      - publish:
+          filters:
+            branches:
+              only: master
