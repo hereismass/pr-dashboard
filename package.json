@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npx webpack-dev-server --mode development ./src/javascripts/index.js --output ./dist/main.js",
     "production": "npx webpack --mode production ./src/javascripts/index.js --output ./dist/main.js",
+    "heroku-server": "./production-run.sh",
     "publish": "./publish.sh"
   },
   "repository": {
@@ -24,6 +25,7 @@
     "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "http-server": "^0.11.1",
     "mini-css-extract-plugin": "^0.4.4",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2",
