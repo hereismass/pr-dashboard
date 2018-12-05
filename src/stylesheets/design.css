@@ -170,7 +170,7 @@ header {
 
 #members {
   display: flex;
-  overflow: scroll;
+  overflow: auto;
 }
 
 #metrics {
