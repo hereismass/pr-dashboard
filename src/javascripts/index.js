@@ -156,7 +156,7 @@ class DashboardApp {
 
         const prReviews = await this.api.getPrReviews(repo, pr.number);
 
-        // console.log('reviews', prReviews);
+        const isValidated = this.calculateReviewedStatus(prReviews);
 
         this.prs.push({
           repo,
@@ -164,6 +164,7 @@ class DashboardApp {
           number: pr.number,
           comments: prDetails.comments,
           mergeable: prDetails.mergeable,
+          validated: isValidated,
           creator: pr.user.avatar_url
         });
       });
@@ -190,6 +191,44 @@ class DashboardApp {
     this.calculateMedianMergeTime();
 
     this.showData();
+  }
+
+  calculateReviewedStatus(reviews) {
+    let nbApproved = 0;
+    let nbRefused = 0;
+
+    reviews.forEach(r => {
+      switch (r.state) {
+        case 'APPROVED':
+          nbApproved++;
+          break;
+        case 'CHANGES_REQUESTED':
+          // if we have a refused review, we check if there is another approved review by the same author later on
+          let isStaleReview = false;
+          reviews.forEach(rr => {
+            if (
+              rr.id !== r.id &&
+              rr.user.login === r.user.login &&
+              rr.state === 'APPROVED' &&
+              Date.parse(rr.submitted_at) - Date.parse(r.submitted_at) > 0
+            ) {
+              isStaleReview = true;
+            }
+          });
+
+          if (!isStaleReview) {
+            nbRefused++;
+          }
+          break;
+        default:
+        // do nothing
+      }
+    });
+
+    if (nbApproved > 0 && nbRefused === 0) {
+      return true;
+    }
+    return false;
   }
 
   calculateMedianMergeTime() {
@@ -224,7 +263,7 @@ class DashboardApp {
         <span class="pr-project">${pr.repo}</span>
         <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
         <span class="pr-comments">${pr.comments} 💬</span>
-        <span class="pr-mergeable">${pr.mergeable ? '👍' : '👎'}</span>
+        <span class="pr-mergeable">${pr.validated ? '✅' : '❌'}</span>
       </div>`;
 
       this.container.insertAdjacentHTML('beforeend', html);
