@@ -165,7 +165,8 @@ class DashboardApp {
           comments: prDetails.comments,
           mergeable: prDetails.mergeable,
           validated: isValidated,
-          creator: pr.user.avatar_url
+          creator: pr.user.avatar_url,
+          url: pr.html_url
         });
       });
 
@@ -258,13 +259,17 @@ class DashboardApp {
     this.refusedDom.textContent = this.lwRefused;
     this.averageDom.textContent = this.lwAverage;
     this.prs.forEach(pr => {
-      const html = `<div class="pr" id="${pr.repo}-${pr.number}">
-        <img class="pr-creator" src="${pr.creator}">
-        <span class="pr-project">${pr.repo}</span>
-        <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
-        <span class="pr-comments">${pr.comments} 💬</span>
-        <span class="pr-mergeable">${pr.validated ? '✅' : '❌'}</span>
-      </div>`;
+      const html = `
+        <a class="pr-link" href="${pr.url}" target="_blank">
+          <div class="pr" id="${pr.repo}-${pr.number}">
+            <img class="pr-creator" src="${pr.creator}">
+            <span class="pr-project">${pr.repo}</span>
+            <span class="pr-title"><span>#${pr.number}</span>${pr.title}</span>
+            <span class="pr-comments">${pr.comments} 💬</span>
+            <span class="pr-mergeable">${pr.validated ? '✅' : '❌'}</span>
+          </div>
+        </a>
+        `;
 
       this.container.insertAdjacentHTML('beforeend', html);
     });
