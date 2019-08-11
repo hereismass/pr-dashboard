@@ -1,4 +1,4 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
+/* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -212,7 +212,7 @@ header {
   line-height: 5vw;
 }
 
-.pr:nth-child(odd) {
+.pr-link:nth-child(odd) .pr {
   background-color: #eeeeee;
 }
 
