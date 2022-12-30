@@ -21,14 +21,14 @@
   "homepage": "https://github.com/hereismass/pr-dashboard#readme",
   "dependencies": {
     "@octokit/rest": "15.17.0",
-    "css-loader": "^1.0.1",
+    "css-loader": "^6.7.3",
     "gh-pages": "^2.0.1",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
+    "html-loader": "^4.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "http-server": "^0.11.1",
-    "mini-css-extract-plugin": "^0.4.4",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.1.2",
+    "mini-css-extract-plugin": "^2.7.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^3.1.10"
   }
 }
